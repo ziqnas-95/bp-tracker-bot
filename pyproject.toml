@@ -1,0 +1,26 @@
+[project]
+name = "bpbot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Haziq Nasaruddin", email = "haziqnasaruddin@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.2.3",
+    "python-telegram-bot>=22.8",
+    "supabase>=2.31.0",
+]
+
+[project.scripts]
+bpbot = "bpbot:main"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.9",
+]
