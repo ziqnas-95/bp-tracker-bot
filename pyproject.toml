@@ -11,6 +11,7 @@ dependencies = [
     "python-dotenv>=1.2.3",
     "python-telegram-bot>=22.8",
     "supabase>=2.31.0",
+    "tzdata>=2026.4",
 ]
 
 [project.scripts]
@@ -22,5 +23,6 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "pytest>=9.1.1",
     "ruff>=0.16.9",
 ]
