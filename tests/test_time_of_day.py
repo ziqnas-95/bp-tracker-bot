@@ -24,4 +24,4 @@ def test_midnight_local_counts_as_morning():
 def test_naive_datetime_rejected():
     with pytest.raises(ValueError):
         # We add both DTZ001 and UP017 to the ignore tag, separated by a comma
-        get_time_of_day(datetime(2026, 9, 28, 8, 0)) # noqa: DTZ001
+        get_time_of_day(datetime(2026, 9, 28, 8, 0))  # noqa: DTZ001
