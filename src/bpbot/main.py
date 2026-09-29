@@ -55,8 +55,18 @@ def main() -> None:
     )
     app.add_error_handler(_on_error)
 
-    log.info("Bot starting (long polling)")
-    app.run_polling()
+    if settings.webhook_base_url:
+        log.info("Bot starting (webhook mode)")
+        app.run_webhook(
+            listen="0.0.0.0",
+            port=settings.port,
+            url_path="webhook",
+            webhook_url=f"{settings.webhook_base_url}/webhook",
+            secret_token=settings.webhook_secret,
+        )
+    else:
+        log.info("Bot starting (long polling)")
+        app.run_polling()
 
 
 if __name__ == "__main__":
