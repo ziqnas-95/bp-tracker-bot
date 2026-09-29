@@ -37,6 +37,7 @@ def _require(name: str) -> str:
 def get_settings() -> Settings:
     # Render sets RENDER_EXTERNAL_URL and PORT automatically
     base_url = _optional("RENDER_EXTERNAL_URL") or _optional("WEBHOOK_BASE_URL")
+    print(f"DEBUG base_url={base_url!r}", flush=True) # line added to confirm debugging
     secret = _optional("WEBHOOK_SECRET")
     if base_url and not secret:
         raise RuntimeError("WEBHOOK_SECRET is required in webhook mode")
