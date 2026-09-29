@@ -1,6 +1,5 @@
+from bpbot.config import get_settings
 from bpbot.db.client import get_client
-
-TABLE = "bp_readings"
 
 
 def insert_reading(
@@ -14,7 +13,7 @@ def insert_reading(
     """Insert one reading and return the saved row (includes id and created_at)."""
     result = (
         get_client()
-        .table(TABLE)
+        .table(_table())
         .insert(
             {
                 "user_id": user_id,
@@ -34,7 +33,7 @@ def get_recent(user_id: int, limit: int = 5) -> list[dict]:
     """Newest first."""
     result = (
         get_client()
-        .table(TABLE)
+        .table(_table())
         .select("*")
         .eq("user_id", user_id)
         .order("created_at", desc=True)
@@ -52,10 +51,14 @@ def delete_latest(user_id: int) -> dict | None:
     row = latest[0]
     (
         get_client()
-        .table(TABLE)
+        .table(_table())
         .delete()
         .eq("id", row["id"])
         .eq("user_id", user_id)  # always scoped, even though the id is unique
         .execute()
     )
     return row
+
+
+def _table() -> str:
+    return get_settings().readings_table
