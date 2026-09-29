@@ -45,10 +45,14 @@ def main() -> None:
     # Only you: messages from anyone else match no handler and are ignored
     only_me = filters.User(user_id=settings.allowed_user_id)
 
-    app.add_handler(CommandHandler(["start", "help"], commands.help_cmd, filters=only_me))
+    app.add_handler(
+        CommandHandler(["start", "help"], commands.help_cmd, filters=only_me)
+    )
     app.add_handler(CommandHandler("log", commands.log_cmd, filters=only_me))
     app.add_handler(CommandHandler("recent", commands.recent_cmd, filters=only_me))
-    app.add_handler(CommandHandler("del_recent", commands.del_recent_cmd, filters=only_me))
+    app.add_handler(
+        CommandHandler("del_recent", commands.del_recent_cmd, filters=only_me)
+    )
     app.add_error_handler(_on_error)
 
     log.info("Bot starting (long polling)")
