@@ -17,3 +17,15 @@ create index bp_readings_user_created_idx
 
 -- Block all public access; the bot's service_role key bypasses this
 alter table public.bp_readings enable row level security;
+
+
+create table public.processed_updates (
+  update_id  bigint primary key,
+  processed_at timestamptz not null default now()
+);
+
+create table public.processed_updates_dev
+  (like public.processed_updates including all);
+
+alter table public.processed_updates enable row level security;
+alter table public.processed_updates_dev enable row level security;

@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from telegram import Update
 from telegram.ext import ContextTypes
@@ -31,7 +31,7 @@ async def log_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     category = classify(parsed.systolic, parsed.diastolic)
-    time_of_day = get_time_of_day(datetime.now(timezone.utc))
+    time_of_day = get_time_of_day(datetime.now(UTC))
 
     try:
         saved = await asyncio.to_thread(
