@@ -41,9 +41,9 @@ HELP_TEXT = (
 
 
 def local_time_str(iso_timestamp: str) -> str:
-    """'2026-09-28T03:14:00+00:00' -> '28 Sep, 11:14' in local time."""
+    """'2026-09-28T03:14:00+00:00' -> '28/9, 11:14' in local time."""
     dt = datetime.fromisoformat(iso_timestamp).astimezone(LOCAL_TZ)
-    return dt.strftime("%d %b, %H:%M")
+    return f"{dt.day}/{dt.month}, {dt.strftime('%H:%M')}"
 
 
 def format_saved(row: dict, urgent: bool) -> str:
@@ -64,7 +64,7 @@ def format_line(row: dict) -> str:
     emoji, _ = CATEGORY_LABELS[row["category"]]
     return (
         f"{emoji} {row['systolic']}/{row['diastolic']} · {row['pulse']} bpm · "
-        f"{TIME_LABELS[row['time_of_day']]} · {local_time_str(row['created_at'])}"
+        f"{local_time_str(row['created_at'])}"
     )
 
 

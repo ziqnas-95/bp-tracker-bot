@@ -63,6 +63,17 @@ async def recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     await msg.reply_html(fmt.format_recent(rows))
 
 
+async def recent20_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.effective_message
+    try:
+        rows = await asyncio.to_thread(repo.get_recent, update.effective_user.id, 20)
+    except Exception:
+        log.exception("Failed to fetch recent readings")
+        await msg.reply_text(DB_ERROR)
+        return
+    await msg.reply_html(fmt.format_recent(rows))
+
+
 async def del_recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     try:
