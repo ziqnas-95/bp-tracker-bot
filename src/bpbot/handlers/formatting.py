@@ -1,3 +1,4 @@
+import calendar
 from datetime import datetime
 
 from bpbot.config import LOCAL_TZ
@@ -78,3 +79,26 @@ def format_recent(rows: list[dict]) -> str:
 
 def format_deleted(row: dict) -> str:
     return "🗑 <b>Deleted</b>\n" + format_line(row)
+
+
+def format_month(all_rows: list[dict], avg, year: int, month: int) -> str:
+    month_name = calendar.month_name[month]
+
+    if avg is None:
+        return f"<b>{month_name} {year}</b>\n\nNo readings logged this month."
+
+    header = (
+        f"<b>{month_name} {year}</b> · {avg.count} reading{'s' if avg.count != 1 else ''}\n"
+        f"Average: {avg.avg_systolic:.0f}/{avg.avg_diastolic:.0f} mmHg · "
+        f"{avg.avg_pulse:.0f} bpm"
+    )
+
+    shown = all_rows[:20]
+    lines = "\n".join(format_line(r) for r in shown)
+    footer = (
+        f"\n\n<i>Showing latest {len(shown)} of {avg.count}.</i>"
+        if avg.count > 20
+        else ""
+    )
+
+    return f"{header}\n\n{lines}{footer}"

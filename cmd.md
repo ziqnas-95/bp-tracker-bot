@@ -10,6 +10,7 @@ Always branch from an up-to-date `main` before touching any files.
 git checkout main
 git pull
 git checkout -b feat/short-description
+git checkout -B feat/short-description  #to override any current branch 
 ```
 
 Naming: `feat/...` for new features, `fix/...` for bug fixes, `docs/...` for docs-only changes (e.g. `feat/recent20`, `fix/timezone-bug`, `docs/readme-update`).

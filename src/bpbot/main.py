@@ -21,6 +21,9 @@ async def _post_init(app: Application) -> None:
             BotCommand("recent", "Show your last 5 readings"),
             BotCommand("recent20", "Show your last 20 readings"),
             BotCommand("del_recent", "Delete your most recent reading"),
+            BotCommand(
+                "month", "Monthly summary, e.g. /month 9 (defaults to current month)"
+            ),
             BotCommand("help", "How to use this bot"),
         ]
     )
@@ -56,6 +59,7 @@ def main() -> None:
     app.add_handler(CommandHandler("log", commands.log_cmd, filters=only_me))
     app.add_handler(CommandHandler("recent", commands.recent_cmd, filters=only_me))
     app.add_handler(CommandHandler("recent20", commands.recent20_cmd, filters=only_me))
+    app.add_handler(CommandHandler("month", commands.month_cmd, filters=only_me))
     app.add_handler(
         CommandHandler("del_recent", commands.del_recent_cmd, filters=only_me)
     )
