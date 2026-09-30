@@ -1,10 +1,10 @@
 import logging
 
-from telegram import BotCommand
-from telegram.ext import Application, CommandHandler, filters
+from telegram import BotCommand, Update
+from telegram.ext import Application, CommandHandler, TypeHandler, filters
 
 from bpbot.config import get_settings
-from bpbot.handlers import commands
+from bpbot.handlers import commands, dedup
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +44,10 @@ def main() -> None:
 
     # Only you: messages from anyone else match no handler and are ignored
     only_me = filters.User(user_id=settings.allowed_user_id)
+
+    # group=-1 runs before the default group (0), so this checks every
+    # update for duplicates before any command handler sees it
+    app.add_handler(TypeHandler(Update, dedup.guard_duplicate_updates), group=-1)
 
     app.add_handler(
         CommandHandler(["start", "help"], commands.help_cmd, filters=only_me)
