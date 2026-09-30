@@ -5,11 +5,13 @@ from datetime import UTC, datetime
 from telegram import Update
 from telegram.ext import ContextTypes
 
+from bpbot.config import LOCAL_TZ
 from bpbot.db import readings_repo as repo
 from bpbot.handlers import formatting as fmt
+from bpbot.services import analytics
 from bpbot.services.classification import classify, is_urgent
-from bpbot.services.parsing import ParseError, parse_log_args
-from bpbot.services.time_of_day import get_time_of_day
+from bpbot.services.parsing import ParseError, parse_log_args, parse_month_arg
+from bpbot.services.time_of_day import get_time_of_day, month_range_utc
 
 log = logging.getLogger(__name__)
 
@@ -87,3 +89,29 @@ async def del_recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await msg.reply_text("Nothing to delete. You have no readings yet.")
     else:
         await msg.reply_html(fmt.format_deleted(deleted))
+
+
+async def month_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.effective_message
+    now_local = datetime.now(LOCAL_TZ)
+
+    try:
+        month = parse_month_arg(context.args, now_local.month)
+    except ParseError as e:
+        await msg.reply_text(str(e))
+        return
+
+    year = now_local.year
+    start_utc, end_utc = month_range_utc(year, month)
+
+    try:
+        rows = await asyncio.to_thread(
+            repo.get_month_readings, update.effective_user.id, start_utc, end_utc
+        )
+    except Exception:
+        log.exception("Failed to fetch month readings")
+        await msg.reply_text(DB_ERROR)
+        return
+
+    avg = analytics.compute_monthly_average(rows)
+    await msg.reply_html(fmt.format_month(rows, avg, year, month))

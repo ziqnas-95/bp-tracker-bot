@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from bpbot.config import get_settings
 from bpbot.db.client import get_client
 
@@ -62,3 +64,20 @@ def delete_latest(user_id: int) -> dict | None:
 
 def _table() -> str:
     return get_settings().readings_table
+
+
+def get_month_readings(
+    user_id: int, start_utc: datetime, end_utc: datetime
+) -> list[dict]:
+    """All readings in [start_utc, end_utc), newest first."""
+    result = (
+        get_client()
+        .table(_table())
+        .select("*")
+        .eq("user_id", user_id)
+        .gte("created_at", start_utc.isoformat())
+        .lt("created_at", end_utc.isoformat())
+        .order("created_at", desc=True)
+        .execute()
+    )
+    return result.data

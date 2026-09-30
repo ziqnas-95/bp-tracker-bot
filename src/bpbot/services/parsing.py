@@ -45,3 +45,18 @@ def parse_log_args(text: str) -> ParsedReading:
         raise ParseError(f"Systolic must be higher than diastolic. {USAGE}")
 
     return ParsedReading(systolic, diastolic, pulse)
+
+
+def parse_month_arg(args: list[str], current_month: int) -> int:
+    """No argument -> current month. Otherwise expects a single int 1-12."""
+    if not args:
+        return current_month
+    if len(args) > 1:
+        raise ParseError("Use /month or /month <1-12>, e.g. /month 9")
+    try:
+        month = int(args[0])
+    except ValueError:
+        raise ParseError("Month must be a number from 1 to 12.")
+    if not 1 <= month <= 12:
+        raise ParseError("Month must be between 1 and 12.")
+    return month
