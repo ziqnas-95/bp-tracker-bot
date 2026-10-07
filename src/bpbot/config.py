@@ -24,6 +24,7 @@ class Settings:
     webhook_base_url: str | None
     webhook_secret: str | None
     port: int
+    family_join_code: str
 
 
 def _require(name: str) -> str:
@@ -50,4 +51,5 @@ def get_settings() -> Settings:
         webhook_base_url=base_url.rstrip("/") if base_url else None,
         webhook_secret=secret,
         port=int(os.getenv("PORT", "10000")),
+        family_join_code=_require("FAMILY_JOIN_CODE"),
     )

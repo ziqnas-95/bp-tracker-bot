@@ -71,7 +71,7 @@ def format_line(row: dict) -> str:
 
 def format_recent(rows: list[dict]) -> str:
     if not rows:
-        return "No readings yet. Try: /log 120/80 72"
+        return "No readings yet. Try: /log 120/80 60"
     return "<b>Recent readings</b> (newest first)\n\n" + "\n".join(
         format_line(r) for r in rows
     )

@@ -81,3 +81,16 @@ def get_month_readings(
         .execute()
     )
     return result.data
+
+
+def has_reading_since(user_id: int, start_utc: datetime) -> bool:
+    result = (
+        get_client()
+        .table(_table())
+        .select("id")
+        .eq("user_id", user_id)
+        .gte("created_at", start_utc.isoformat())
+        .limit(1)
+        .execute()
+    )
+    return len(result.data) > 0

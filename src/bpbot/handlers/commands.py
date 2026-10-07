@@ -5,8 +5,9 @@ from datetime import UTC, datetime
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from bpbot.config import LOCAL_TZ
+from bpbot.config import LOCAL_TZ, get_settings
 from bpbot.db import readings_repo as repo
+from bpbot.db import users_repo
 from bpbot.handlers import formatting as fmt
 from bpbot.services import analytics
 from bpbot.services.classification import classify, is_urgent
@@ -115,3 +116,24 @@ async def month_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     avg = analytics.compute_monthly_average(rows)
     await msg.reply_html(fmt.format_month(rows, avg, year, month))
+
+
+async def join_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.effective_message
+    if not context.args:
+        await msg.reply_text("Usage: /join <code>")
+        return
+
+    if context.args[0] != get_settings().family_join_code:
+        await msg.reply_text("That code isn't right.")
+        return
+
+    user = update.effective_user
+    try:
+        await asyncio.to_thread(users_repo.add_member, user.id, user.first_name)
+    except Exception:
+        log.exception("Failed to add member")
+        await msg.reply_text(DB_ERROR)
+        return
+
+    await msg.reply_text("You're in! Send /help to see what you can do.")
