@@ -51,7 +51,7 @@ def main() -> None:
 
     # group=-1 runs before the default group (0), so this checks every
     # update for duplicates before any command handler sees it
-    app.add_handler(TypeHandler(Update, dedup.guard_duplicate_updates), group=-1)
+    app.add_handler(TypeHandler(Update, dedup.guard_duplicate_updates), group=-2)
     app.add_handler(TypeHandler(Update, membership.guard_membership), group=-1)
 
     app.add_handler(
