@@ -21,7 +21,8 @@ def is_member(telegram_id: int) -> bool:
 
 def add_member(telegram_id: int, display_name: str | None) -> None:
     get_client().table(_table()).upsert(
-        {"telegram_id": telegram_id, "display_name": display_name, "is_active": True}
+        {"telegram_id": telegram_id, "display_name": display_name, "is_active": True},
+        on_conflict="telegram_id",
     ).execute()
 
 
