@@ -49,10 +49,9 @@ def main() -> None:
         .build()
     )
 
-    # group=-1 runs before the default group (0), so this checks every
-    # update for duplicates before any command handler sees it
-    app.add_handler(TypeHandler(Update, dedup.guard_duplicate_updates), group=-2)
-    app.add_handler(TypeHandler(Update, membership.guard_membership), group=-1)
+    # Check membership before recording an update ID or running a command.
+    app.add_handler(TypeHandler(Update, membership.guard_membership), group=-2)
+    app.add_handler(TypeHandler(Update, dedup.guard_duplicate_updates), group=-1)
 
     app.add_handler(
         CommandHandler(
@@ -60,6 +59,7 @@ def main() -> None:
             commands.help_cmd,
         )
     )
+    app.add_handler(CommandHandler("join", commands.join_cmd))
     app.add_handler(
         CommandHandler(
             "log",

@@ -26,6 +26,7 @@ URGENT_NOTE = (
 HELP_TEXT = (
     "<b>BP Tracker</b>\n\n"
     "<b>Commands</b>\n"
+    "/join &lt;code&gt; - join with the code shared by your family\n"
     "/log 120/80 72 - save a reading (systolic/diastolic pulse)\n"
     "/recent - show your last 5 readings\n"
     "/del_recent - delete your most recent reading\n"

@@ -1,4 +1,5 @@
 import asyncio
+import hmac
 import logging
 from datetime import UTC, datetime
 
@@ -120,11 +121,15 @@ async def month_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def join_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
-    if not context.args:
+    if update.effective_chat.type != "private":
+        await msg.reply_text("Send /join <code> in a private chat with this bot.")
+        return
+
+    if len(context.args) != 1:
         await msg.reply_text("Usage: /join <code>")
         return
 
-    if context.args[0] != get_settings().family_join_code:
+    if not hmac.compare_digest(context.args[0], get_settings().family_join_code):
         await msg.reply_text("That code isn't right.")
         return
 

@@ -30,7 +30,7 @@ A Telegram bot for logging blood pressure readings, shared with family. Send a r
 | `/del_recent` | Delete your most recent reading |
 | `/help` or `/start` | Show usage instructions |
 
-`/help` and `/start` work before joining. Every other command requires `/join` first.
+`/help` and `/start` work before joining. Send `/join <code>` in a private chat with the bot. Other commands require membership; if you have not joined, the bot tells you how.
 
 ## Categories
 
@@ -268,7 +268,7 @@ Point a free uptime monitor (for example UptimeRobot, 5-minute interval) at the 
 - `.env` is git-ignored. Never commit tokens, the service-role key, or the family join code.
 - The service-role key bypasses Row Level Security. Treat it like a root password.
 - All database queries are filtered by `user_id`.
-- Every command except `/start`, `/help`, and `/join` requires prior membership (`users` table), checked before the command handler runs.
+- Every command except `/start`, `/help`, and `/join` requires prior membership (`users` table), checked before duplicate tracking or the command handler runs. Public commands and failed joins do not create database rows.
 - `FAMILY_JOIN_CODE` has no rate limiting or lockout on wrong guesses. Fine for a small shared code among family; rotate it if it ever leaks further.
 - In webhook mode, requests without the correct `WEBHOOK_SECRET` header are rejected.
 - Repeated Telegram updates (`update_id`) are recorded and ignored on the second attempt, so webhook retries can't double-submit a reading.
