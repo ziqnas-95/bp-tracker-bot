@@ -22,3 +22,9 @@ def month_range_utc(year: int, month: int) -> tuple[datetime, datetime]:
     else:
         end_local = datetime(year, month + 1, 1, tzinfo=LOCAL_TZ)
     return start_local.astimezone(UTC), end_local.astimezone(UTC)
+
+
+def start_of_today_utc() -> datetime:
+    now_local = datetime.now(LOCAL_TZ)
+    midnight_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
+    return midnight_local.astimezone(UTC)

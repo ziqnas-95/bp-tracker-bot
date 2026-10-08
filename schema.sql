@@ -29,3 +29,24 @@ create table public.processed_updates_dev
 
 alter table public.processed_updates enable row level security;
 alter table public.processed_updates_dev enable row level security;
+
+
+create table public.users (
+  id           uuid primary key default gen_random_uuid(),
+  telegram_id  bigint not null unique,
+  display_name text,
+  joined_at    timestamptz not null default now(),
+  is_active    boolean not null default true
+);
+
+create table public.users_dev (like public.users including all);
+
+alter table public.users enable row level security;
+alter table public.users_dev enable row level security;
+
+create index users_telegram_id_idx on public.users (telegram_id);
+create index users_dev_telegram_id_idx on public.users_dev (telegram_id);
+
+-- Seed yourself as the owner in BOTH tables, so dev testing also works
+insert into public.users (telegram_id, display_name) values (762425917, 'owner');
+insert into public.users_dev (telegram_id, display_name) values (762425917, 'owner');

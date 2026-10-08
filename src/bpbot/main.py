@@ -1,10 +1,12 @@
 import logging
+from datetime import time as dt_time
 
 from telegram import BotCommand, Update
-from telegram.ext import Application, CommandHandler, TypeHandler, filters
+from telegram.ext import Application, CommandHandler, TypeHandler
 
-from bpbot.config import get_settings
-from bpbot.handlers import commands, dedup
+from bpbot.config import LOCAL_TZ, get_settings
+from bpbot.handlers import commands, dedup, membership
+from bpbot.services.reminders import send_morning_reminders
 
 log = logging.getLogger(__name__)
 
@@ -25,6 +27,7 @@ async def _post_init(app: Application) -> None:
                 "month", "Monthly summary, e.g. /month 9 (defaults to current month)"
             ),
             BotCommand("help", "How to use this bot"),
+            BotCommand("join", "Join with your family code"),
         ]
     )
 
@@ -46,24 +49,54 @@ def main() -> None:
         .build()
     )
 
-    # Only you: messages from anyone else match no handler and are ignored
-    only_me = filters.User(user_id=settings.allowed_user_id)
-
     # group=-1 runs before the default group (0), so this checks every
     # update for duplicates before any command handler sees it
     app.add_handler(TypeHandler(Update, dedup.guard_duplicate_updates), group=-1)
+    app.add_handler(TypeHandler(Update, membership.guard_membership), group=-1)
 
     app.add_handler(
-        CommandHandler(["start", "help"], commands.help_cmd, filters=only_me)
+        CommandHandler(
+            ["start", "help"],
+            commands.help_cmd,
+        )
     )
-    app.add_handler(CommandHandler("log", commands.log_cmd, filters=only_me))
-    app.add_handler(CommandHandler("recent", commands.recent_cmd, filters=only_me))
-    app.add_handler(CommandHandler("recent20", commands.recent20_cmd, filters=only_me))
-    app.add_handler(CommandHandler("month", commands.month_cmd, filters=only_me))
     app.add_handler(
-        CommandHandler("del_recent", commands.del_recent_cmd, filters=only_me)
+        CommandHandler(
+            "log",
+            commands.log_cmd,
+        )
+    )
+    app.add_handler(
+        CommandHandler(
+            "recent",
+            commands.recent_cmd,
+        )
+    )
+    app.add_handler(
+        CommandHandler(
+            "recent20",
+            commands.recent20_cmd,
+        )
+    )
+    app.add_handler(
+        CommandHandler(
+            "month",
+            commands.month_cmd,
+        )
+    )
+    app.add_handler(
+        CommandHandler(
+            "del_recent",
+            commands.del_recent_cmd,
+        )
     )
     app.add_error_handler(_on_error)
+
+    app.job_queue.run_daily(
+        send_morning_reminders,
+        time=dt_time(hour=6, minute=0, tzinfo=LOCAL_TZ),
+        name="morning_reminder",
+    )
 
     if settings.webhook_base_url:
         log.info("Bot starting (webhook mode)")
