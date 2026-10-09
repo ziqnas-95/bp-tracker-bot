@@ -71,7 +71,7 @@ def format_month(all_rows: list[dict], avg, year: int, month: int) -> str:
     count = f"{avg.count} reading" if avg.count == 1 else f"{avg.count} readings"
     lines = [
         f"{month_name} {year} - {count}",
-        f"Average: {avg.avg_systolic:.0f}/{avg.avg_diastolic:.0f}, "
+        f"Average: {avg.avg_systolic:.0f}/{avg.avg_diastolic:.0f}",
         f"pulse {avg.avg_pulse:.0f}",
     ]
     shown = all_rows[:20]

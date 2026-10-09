@@ -44,6 +44,7 @@ def get_recent(user_id: int, limit: int = 5) -> list[dict]:
     )
     return result.data
 
+
 def delete_latest(user_id: int) -> dict | None:
     """Delete the user's most recent reading. Returns the deleted row, or None if there was none."""
     latest = get_recent(user_id, limit=1)
@@ -80,6 +81,3 @@ def get_month_readings(
         .execute()
     )
     return result.data
-
-
-\n

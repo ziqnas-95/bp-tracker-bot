@@ -22,5 +22,3 @@ def month_range_utc(year: int, month: int) -> tuple[datetime, datetime]:
     else:
         end_local = datetime(year, month + 1, 1, tzinfo=LOCAL_TZ)
     return start_local.astimezone(UTC), end_local.astimezone(UTC)
-
-\n

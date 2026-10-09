@@ -8,9 +8,7 @@ from bpbot.db import users_repo
 
 # These must work before someone has joined
 EXEMPT_COMMANDS = {"/start", "/help", "/join"}
-JOIN_PROMPT = (
-    "Join first. Ask for the code, then send /join <code> in a private chat."
-)
+JOIN_PROMPT = "Join first. Ask for the code, then send /join <code> in a private chat."
 log = logging.getLogger(__name__)
 
 
