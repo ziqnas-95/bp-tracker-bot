@@ -9,8 +9,7 @@ from bpbot.db import users_repo
 # These must work before someone has joined
 EXEMPT_COMMANDS = {"/start", "/help", "/join"}
 JOIN_PROMPT = (
-    "You need to join first. Ask whoever shared this bot with you for "
-    "the join code, then send: /join <code> in a private chat with this bot."
+    "Join first. Ask for the code, then send /join <code> in a private chat."
 )
 log = logging.getLogger(__name__)
 
@@ -31,7 +30,7 @@ async def guard_membership(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         is_member = await asyncio.to_thread(users_repo.is_member, user.id)
     except Exception:
         log.exception("Failed to check membership")
-        await msg.reply_text("Membership check is unavailable. Please try again later.")
+        await msg.reply_text("Can't check access right now. Try again later.")
         raise ApplicationHandlerStop
     if not is_member:
         await msg.reply_text(JOIN_PROMPT)

@@ -13,7 +13,7 @@ class ParsedReading:
     pulse: int
 
 
-USAGE = "Use the format: /log 120/80 72  (systolic/diastolic pulse)"
+USAGE = "Use /log 120/80 72."
 
 # Mirrors the database CHECK constraints
 SYSTOLIC_RANGE = (50, 300)
@@ -26,14 +26,14 @@ _PATTERN = re.compile(r"^\s*(\d{1,3})\s*/\s*(\d{1,3})\s+(\d{1,3})\s*$")
 def _check_range(name: str, value: int, low_high: tuple[int, int]) -> None:
     low, high = low_high
     if not low <= value <= high:
-        raise ParseError(f"{name} {value} looks wrong (expected {low}-{high}). {USAGE}")
+        raise ParseError(f"{name} must be between {low} and {high}. {USAGE}")
 
 
 def parse_log_args(text: str) -> ParsedReading:
     """Parse the text after /log, e.g. '120/80 99'."""
     match = _PATTERN.match(text or "")
     if not match:
-        raise ParseError(f"I couldn't read that. {USAGE}")
+        raise ParseError(f"Invalid reading. {USAGE}")
 
     systolic, diastolic, pulse = (int(g) for g in match.groups())
 
@@ -52,11 +52,11 @@ def parse_month_arg(args: list[str], current_month: int) -> int:
     if not args:
         return current_month
     if len(args) > 1:
-        raise ParseError("Use /month or /month <1-12>, e.g. /month 9")
+        raise ParseError("Use /month or /month 1-12.")
     try:
         month = int(args[0])
     except ValueError:
-        raise ParseError("Month must be a number from 1 to 12.")
+        raise ParseError("Month must be from 1 to 12.")
     if not 1 <= month <= 12:
-        raise ParseError("Month must be between 1 and 12.")
+        raise ParseError("Month must be from 1 to 12.")
     return month

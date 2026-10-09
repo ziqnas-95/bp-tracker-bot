@@ -44,7 +44,6 @@ def get_recent(user_id: int, limit: int = 5) -> list[dict]:
     )
     return result.data
 
-
 def delete_latest(user_id: int) -> dict | None:
     """Delete the user's most recent reading. Returns the deleted row, or None if there was none."""
     latest = get_recent(user_id, limit=1)
@@ -83,14 +82,4 @@ def get_month_readings(
     return result.data
 
 
-def has_reading_since(user_id: int, start_utc: datetime) -> bool:
-    result = (
-        get_client()
-        .table(_table())
-        .select("id")
-        .eq("user_id", user_id)
-        .gte("created_at", start_utc.isoformat())
-        .limit(1)
-        .execute()
-    )
-    return len(result.data) > 0
+\n

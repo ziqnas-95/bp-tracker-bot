@@ -17,11 +17,11 @@ from bpbot.services.time_of_day import get_time_of_day, month_range_utc
 
 log = logging.getLogger(__name__)
 
-DB_ERROR = "Something went wrong talking to the database. Please try again."
+DB_ERROR = "Something went wrong. Please try again."
 
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.effective_message.reply_html(fmt.HELP_TEXT)
+    await update.effective_message.reply_text(fmt.HELP_TEXT)
 
 
 async def log_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -53,7 +53,7 @@ async def log_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     urgent = is_urgent(parsed.systolic, parsed.diastolic)
-    await msg.reply_html(fmt.format_saved(saved, urgent))
+    await msg.reply_text(fmt.format_saved(saved, urgent))
 
 
 async def recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -64,7 +64,7 @@ async def recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         log.exception("Failed to fetch recent readings")
         await msg.reply_text(DB_ERROR)
         return
-    await msg.reply_html(fmt.format_recent(rows))
+    await msg.reply_text(fmt.format_recent(rows))
 
 
 async def recent20_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -75,7 +75,7 @@ async def recent20_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         log.exception("Failed to fetch recent readings")
         await msg.reply_text(DB_ERROR)
         return
-    await msg.reply_html(fmt.format_recent(rows))
+    await msg.reply_text(fmt.format_recent(rows))
 
 
 async def del_recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -90,7 +90,7 @@ async def del_recent_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if deleted is None:
         await msg.reply_text("Nothing to delete. You have no readings yet.")
     else:
-        await msg.reply_html(fmt.format_deleted(deleted))
+        await msg.reply_text(fmt.format_deleted(deleted))
 
 
 async def month_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -116,7 +116,7 @@ async def month_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     avg = analytics.compute_monthly_average(rows)
-    await msg.reply_html(fmt.format_month(rows, avg, year, month))
+    await msg.reply_text(fmt.format_month(rows, avg, year, month))
 
 
 async def join_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -130,7 +130,7 @@ async def join_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     if not hmac.compare_digest(context.args[0], get_settings().family_join_code):
-        await msg.reply_text("That code isn't right.")
+        await msg.reply_text("Wrong code.")
         return
 
     user = update.effective_user
@@ -141,4 +141,4 @@ async def join_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await msg.reply_text(DB_ERROR)
         return
 
-    await msg.reply_text("You're in! Send /help to see what you can do.")
+    await msg.reply_text("Joined. Send /help for commands.")

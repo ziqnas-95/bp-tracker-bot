@@ -1,12 +1,10 @@
 import logging
-from datetime import time as dt_time
 
 from telegram import BotCommand, Update
 from telegram.ext import Application, CommandHandler, TypeHandler
 
-from bpbot.config import LOCAL_TZ, get_settings
+from bpbot.config import get_settings
 from bpbot.handlers import commands, dedup, membership
-from bpbot.services.reminders import send_morning_reminders
 
 log = logging.getLogger(__name__)
 
@@ -91,12 +89,6 @@ def main() -> None:
         )
     )
     app.add_error_handler(_on_error)
-
-    app.job_queue.run_daily(
-        send_morning_reminders,
-        time=dt_time(hour=6, minute=0, tzinfo=LOCAL_TZ),
-        name="morning_reminder",
-    )
 
     if settings.webhook_base_url:
         log.info("Bot starting (webhook mode)")
